@@ -40,9 +40,11 @@ class BotController {
     const trackingCode = ctx.update.message.text
     try {
       const chat = ctx.update.message.chat
-      const trackingData = await tracking(trackingCode)
 
-      const invalidTrackingCode = checkInvalidCode(trackingData[0].mensagem)
+      const regex = /\W|_/
+      const trackingData = !regex.test(trackingCode) ? await tracking(trackingCode) : null
+
+      const invalidTrackingCode = Array.isArray(trackingData) ? checkInvalidCode(trackingData[0].mensagem) : true
       if (invalidTrackingCode) {
         return ctx.replyWithMarkdown(invalidCodeMessage(trackingCode))
       }
